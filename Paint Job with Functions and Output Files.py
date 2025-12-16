@@ -1,6 +1,8 @@
 #Purpose: Paint Job with Functions and Output Files
 #Author: Nikita Dancik (Dickens)
 
+import math
+
 #States with tax rates
 CT: .06
 MA: .0625
@@ -9,60 +11,38 @@ NH: .0
 RI: .07
 VT: .06
 
-#Define Main Function
-def main():
+## def getFloatInput
+def getFloatInput(sInput):
+    while True:
+        try:
+            fValue = float(input(sInput))
+            if fValue <= 0:
+                print("Input must be a positive numeric value")
+            else:
+                return fValue
+        except ValueError:
+                print("Input must be a positive numeric value")
 
-    customer_file = open(sLast,+'_PaintJobOutput.txt','w')
-    
-    print('Estimate the cost of a paint job.')
-    print()
-    sFirst = input("What is your first name: ") 
-    sLast = input("What is your last name: ")
-    sqft_wall()
-    paint_price()
-    getGallonsofPaint()
-    getLaborHours()
-    labor_price()
-    sState = input('Job located in what state: ')
-    sale_tax(sState)
-    customer_name(sLast)
-    gallons_of_paint()
-    hrs_of_labor()                      
-    getPaintCost()
-    getLaborCost()
-    taxes()
-    showCostEstimate()
+#Define Gallons of paint 
+def getGallonsOfPaint(fWallSize,fFeetPerGallon):
+    fGallonsNeeded = fWallSize/ fFeetPerGallon
+    iGallonsOfPaint = math.ceil(fGallonsNeeded)
+    return iGallonsOfPaint
 
-    customer_file.close()
+#Define Labor Cost
+def getLaborCost(fLaborHours, fLaborChargePerHour):
+    return fLaborHours * fLaborChargePerHour
 
-    print('File' ,customer_file,'was created.')
+#Define Labor Hours
+def getLaborHours (fLaborHoursPerGallon, iGallonsOfPaint):
+    return fLaborHoursPerGallon * iGallonsOfPaint
 
-#Define the square feet of the wall
-def sqft_wall():
-    sWall = input('Enter wall pace in square feet: ')
-
-#Define the paint price per gallon
-def paint_price():
-    fPaintPrice = float(input('Enter paint price per gallon: $ '))
-
-#Define the feet per gallon of paint
-def getGallonsofPaint():
-    fGallon = float(input('Enter feet per gallon: '))
-
-#Define Labor hours per gallon
-def getLaborHours():
-    fLaborHours = float(input('How many hours of labor per gallon: '))
-
-#Define price of labor per hour
-def labor_price():
-    fLaborCost = float(input('Labor charge per hour: '))
-
-#Define Gallons of paint needed
-def gallons_of_paint():
-    fPaintGallon = float(input('Gallons of paint: '))
+#Define Paint Cost
+def getPaintCost (iGallonsOfPaint, fPaintPrice):
+    return iGallonsOfPaint * fPaintPrice
 
 #Enter the state sales tax
-def sale_tax(sState):
+def getSaleTax(sState):
     if sState == "Ma" or "MA":
         fTax = .0625
     elif sState == "Ct" or "CT":
@@ -75,95 +55,59 @@ def sale_tax(sState):
         fTax  = .07
     elif sState == "Vt" or "VT":
         fTax = .06
-    else :
+    else:
         fTax = .0
-    print('Sale tax is:',fTax)
-
-#Get the customer name
-def customer_name(sLast):
-    print('Customer Last Name:',sLast)
-
-
-#Define hours of labor work
-def hrs_of_labor():
-    GetLaborHours = float(input(labor_per_gallon * gallons_of_paint))
-    print(float(input('Hours of labor:',getLaborHours)))
-
-#Define the total cost of paint
-def getPaintCost():
-    GetPaintCharges = float(input((paint_price * labor_per_gallon) * sale_tax(sState)))
-    print(float(input('Paint Charge:',getPaintCharges)))
-
-#Define the Labor charges
-def getLaborCost():
-    fGetLaborCost = float(input(hrs_of_labor * labor_price))
-    print(float(input('Labor Charge:',getLaborCost)))
-
-#Define total taxes
-def taxes():
-    GetTax = float(input((paint_charge * labor_charge) * sale_tax(sState)))
-    print(float(input('Tax:',getTax)))
+    return fTax
 
 #Define the estimated cost
-def showCostEstimate():
-    ShowCostEstimate = float(input(getPaintCharges + getLaborCost + getTax))
-    print(float(input('Total cost:',showCostEstimate)))
-    
-#
-def getFloatInput(getGallonsofPaint):
-    try:
-        if int(getGallonsofPaint) == float(getGallonsofPaint): 
-            return int(getGallonsofPaint),'int'
+def showCostEstimate(iGallonsOfPaint, fLaborHours, fPaintCost, fLaborCost, fTaxAmount, fTotalCost,sCustomerLastName):
+    sFileName = sCustomerLastName + "_PaintJobOut.txt"
+    fOutFile = open(sFileName, "w")
 
-    except:
-        try:
-            return float(getGallonsofPaint),'float'
-        except:
-            return getGallonsofPaint, 'str'
-            
-def getFloatInput(getLaborHours):
-    try:
-        if int(getLaborHours) == float(getLaborHours): 
-            return int(getLaborHours),'int'
+    def print_and_write (sLine):
+        print (sLine)
+        fOutFile.write (sLine + "\n")
 
-    except:
-        try:
-            return float(getLaborHours),'float'
-        except:
-            return getLaborHours, 'str'    
+    print_and_write ('Gallons of Paint: ' + str(iGallonsOfPaint))
+    print_and_write ('Hours of Labor: ' + format(fLaborHours, '.1f'))
+    print_and_write ('Paint Charges: ' + format(fPaintCost, '.2f'))
+    print_and_write ('Labor Charges: ' + format(fLaborCost, '.2f'))
+    print_and_write ('Taxes: ' + format(fTaxAmount, '.2f'))
+    print_and_write ('Total Cost: ' + format(fTotalCost, '.2f'))
 
-def getFloatInput(getLaborCost):
-    try:
-        if int(getLaborCost) == float(getLaborCost): 
-            return int(getLaborCost),'int'
+    fOutFile.close()
+    print("File:",sFileName, 'was created.')
 
-    except:
-        try:
-            return float(getLaborCost),'float'
-        except:
-            return getLaborCost, 'str'
+#Define Main Function
+def main():
+    #User input
+    #Define the square feet of the wall
+    fWallSize = getFloatInput('Enter wall pace in square feet: ')
+    #Define the paint price per gallon
+    fPaintPrice = getFloatInput('Enter paint price per gallon: $')
+    #Define the feet per gallon of paint
+    fFeetPerGallon = getFloatInput('Enter feet per gallon: ')
+   #Define Labor hours per gallon
+    fLaborHoursPerGallon = getFloatInput('How many labor hours per gallon: ')
+    #Define price of labor per hour
+    fLaborChargePerHour = getFloatInput('Labor charge per hour: ') 
+    sCustomerLastName = input("What is your last name: ")
+    sState = input('Job located in what state: ')
 
-def getFloatInput(getPaintCost):
-    try:
-        if int(getPaintCost ) == float(getPaintCost ): 
-            return int(getPaintCost ),'int'
+    #Calculate
+    iGallonsOfPaint = getGallonsOfPaint(fWallSize,fFeetPerGallon)
+    fLaborHours = getLaborHours (fLaborHoursPerGallon, iGallonsOfPaint)
+    fPaintCost = getPaintCost (iGallonsOfPaint, fPaintPrice)
+    fLaborCost = getLaborCost(fLaborHours, fLaborChargePerHour)
 
-    except:
-        try:
-            return float(getPaintCost ),'float'
-        except:
-            return getPaintCost, 'str'
+    #Tax Total
+    fTaxRate = getSaleTax(sState)
+    fTaxAmount = (fLaborCost + fPaintCost) * fTaxRate
+    fTotalCost = fLaborCost + fPaintCost + fTaxAmount
 
-def getFloatInput(showCostEstimate):
-    try:
-        if int(showCostEstimate) ==  float(showCostEstimate): 
-            return int(showCostEstimate),'int'
-
-    except:
-        try:
-            return float(showCostEstimate),'float'
-        except:
-            return showCostEstimate, 'str'
+    #Output
+    showCostEstimate(iGallonsOfPaint, fLaborHours, fPaintCost, fLaborCost, fTaxAmount, fTotalCost, sCustomerLastName)
+   
 main()  
     
     
